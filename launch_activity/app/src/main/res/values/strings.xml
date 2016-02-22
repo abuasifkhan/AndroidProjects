@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">This is the Main Menu</string>
+    <string name="app_name">Launch Activity</string>
+    <string name="play_game">Play Game?</string>
+    <string name="end_game">Done?</string>
+</resources>

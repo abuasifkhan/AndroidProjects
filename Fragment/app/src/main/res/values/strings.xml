@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Fragment</string>
+    <string name="topTextInput"></string>
+    <string name="bottomTextInput"></string>
+    <string name="button">Hit Me Bro!</string>
+    <string name="topText">Top</string>
+    <string name="bottomText">Bottom</string>
+</resources>
