@@ -82,13 +82,16 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_all) {
-            // Handle the camera action
+            // TODO: Show all Tasks
+
         } else if (id == R.id.nav_calendar) {
+            // TODO: Show all Calendar tasks. It'll be for later use.
 
         } else if (id == R.id.nav_edit) {
+            // TODO: New activity which edits the Drawers group list
 
         } else if (id == R.id.nav_settings) {
-
+            // TODO: Setting. It'll be for later.
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
