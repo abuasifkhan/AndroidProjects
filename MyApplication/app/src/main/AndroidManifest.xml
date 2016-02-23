@@ -18,6 +18,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".addNew">
+        </activity>
+        <activity android:name=".getDate"></activity>
+        <activity android:name=".getTime"></activity>
     </application>
 
 </manifest>
