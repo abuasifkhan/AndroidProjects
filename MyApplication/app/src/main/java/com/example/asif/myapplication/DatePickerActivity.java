@@ -11,7 +11,7 @@ import android.widget.Toast;
 /**
  * Created by asif on 23/02/16.
  */
-public class getDate extends Activity {
+public class DatePickerActivity extends Activity {
     DatePicker datePicker;
     Button button;
     @Override
@@ -36,4 +36,5 @@ public class getDate extends Activity {
             }
         });
     }
+
 }

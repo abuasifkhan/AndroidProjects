@@ -10,7 +10,7 @@ import android.widget.TextView;
 /**
  * Created by asif on 23/02/16.
  */
-public class addNew extends Activity{
+public class AddNewActivity extends Activity{
     EditText givenTitle, givenDescription;
     TextView givenTime, givenDate;
     public final int REQ_CODE_DATE=37;
@@ -21,6 +21,7 @@ public class addNew extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addnew);
 
+
         givenTitle=(EditText) findViewById(R.id.titleInput);
         givenDescription = (EditText) findViewById(R.id.descriptionInput);
 
@@ -28,7 +29,10 @@ public class addNew extends Activity{
         givenTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(addNew.this, getTime.class);
+                Intent i = new Intent(AddNewActivity.this, TimePickerActivity.class);
+//                Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+//                i.putExtra("currHour",cal.get(Calendar.HOUR));
+//                i.putExtra("currMin", cal.get(Calendar.MINUTE));
                 startActivityForResult(i, REQ_CODE_TIME);
             }
         });
@@ -37,7 +41,10 @@ public class addNew extends Activity{
         givenDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(addNew.this, getDate.class);
+                Intent i = new Intent(AddNewActivity.this, DatePickerActivity.class);
+//                Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+//                i.putExtra("currMonth",cal.MONTH);
+//                i.putExtra("currYear",cal.YEAR);
                 startActivityForResult(i, REQ_CODE_DATE);
             }
         });

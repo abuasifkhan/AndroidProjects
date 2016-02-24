@@ -11,7 +11,7 @@ import android.widget.TimePicker;
 /**
  * Created by asif on 23/02/16.
  */
-public class getTime extends Activity {
+public class TimePickerActivity extends Activity {
     private Button timeButton;
     private TimePicker timePicker;
     @Override
