@@ -9,4 +9,5 @@
     <string name="timeInput">Pick Time</string>
     <string name="dateButton">Ok</string>
     <string name="timeButton">Ok</string>
+    <string name="title">Title</string>
 </resources>
