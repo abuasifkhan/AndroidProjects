@@ -14,6 +14,7 @@ import android.widget.Toast;
 public class DatePickerActivity extends Activity {
     DatePicker datePicker;
     Button button;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,13 +26,13 @@ public class DatePickerActivity extends Activity {
             public void onClick(View v) {
                 Intent iData = new Intent();
                 int year = datePicker.getYear();
-                int month = datePicker.getMonth()+1;
+                int month = datePicker.getMonth() + 1;
                 int day = datePicker.getDayOfMonth();
-                Toast.makeText(getBaseContext(),"Button Clicked", Toast.LENGTH_LONG);
+                Toast.makeText(getBaseContext(), "Button Clicked", Toast.LENGTH_LONG);
                 iData.putExtra("year", year);
-                iData.putExtra("month",month);
-                iData.putExtra("day",day);
-                setResult(Activity.RESULT_OK,iData);
+                iData.putExtra("month", month);
+                iData.putExtra("day", day);
+                setResult(Activity.RESULT_OK, iData);
                 finish();
             }
         });

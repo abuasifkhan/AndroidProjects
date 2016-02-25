@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -27,18 +27,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode==666 && resultCode==Activity.RESULT_OK){
+        if (requestCode == 666 && resultCode == Activity.RESULT_OK) {
             Task newTask = (Task) data.getExtras().getSerializable("newTask");
             myDatabase.addTask(newTask);
             UpdateTaskList();
         }
     }
 
-    private void UpdateTaskList(){
-        Vector<Task>taskList;
+    private void UpdateTaskList() {
+        Vector<Task> taskList;
         taskList = myDatabase.databaseToTask();
 
-        ListAdapter adapter = new CustomAdapter(this,taskList);
+        ListAdapter adapter = new CustomAdapter(this, taskList);
         ListView listView = (ListView) findViewById(R.id.taskListView);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         myListName = "all";
-        myDatabase = new dataBaseHandler(this,null,null,1);
+        myDatabase = new dataBaseHandler(this, null, null, 1);
 
         UpdateTaskList();
 
@@ -67,9 +67,9 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {     // If Fab Button Clicked
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,AddNewActivity.class);
-                intent.putExtra("listName",myListName);
-                startActivityForResult(intent,666);  // TODO: Send some data from intent from here.
+                Intent intent = new Intent(MainActivity.this, AddNewActivity.class);
+                intent.putExtra("listName", myListName);
+                startActivityForResult(intent, 666);  // TODO: Send some data from intent from here.
 //                Toast.makeText(getApplicationContext(),"Going to AddNew", Toast.LENGTH_LONG);
             }
         });
