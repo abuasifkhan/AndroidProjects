@@ -49,4 +49,22 @@
         android:layout_alignEnd="@+id/dateInput"
         android:layout_marginTop="30dp" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/okButton"
+        android:id="@+id/okButton"
+        android:layout_below="@+id/timeInput"
+        android:layout_alignStart="@+id/timeInput" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/cancelButton"
+        android:id="@+id/cancelButton"
+        android:layout_below="@+id/timeInput"
+        android:layout_toEndOf="@+id/okButton" />
+
 </RelativeLayout>

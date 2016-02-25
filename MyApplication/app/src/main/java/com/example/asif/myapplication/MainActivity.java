@@ -1,5 +1,6 @@
 package com.example.asif.myapplication;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,9 +13,44 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    dataBaseHandler myDatabase;
+    private String myListName;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode==666 && resultCode==Activity.RESULT_OK){
+            Task newTask = (Task) data.getExtras().getSerializable("newTask");
+            myDatabase.addTask(newTask);
+            UpdateTaskList();
+        }
+    }
+
+    private void UpdateTaskList(){
+        Vector<Task>taskList;
+        taskList = myDatabase.databaseToTask();
+
+        ListAdapter adapter = new CustomAdapter(this,taskList);
+        ListView listView = (ListView) findViewById(R.id.taskListView);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // TODO: Do some works.
+                Task nowTask = (Task) parent.getItemAtPosition(position);
+                Toast.makeText(MainActivity.this, nowTask.getTitle(), Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,12 +58,18 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        myListName = "all";
+        myDatabase = new dataBaseHandler(this,null,null,1);
+
+        UpdateTaskList();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {     // If Fab Button Clicked
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,AddNewActivity.class));  // TODO: Send some data from intent from here.
+                Intent intent = new Intent(MainActivity.this,AddNewActivity.class);
+                intent.putExtra("listName",myListName);
+                startActivityForResult(intent,666);  // TODO: Send some data from intent from here.
 //                Toast.makeText(getApplicationContext(),"Going to AddNew", Toast.LENGTH_LONG);
             }
         });
@@ -98,3 +140,4 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 }
+
