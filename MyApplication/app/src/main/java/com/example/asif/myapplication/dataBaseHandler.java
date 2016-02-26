@@ -63,6 +63,19 @@ public class dataBaseHandler extends SQLiteOpenHelper {
         db.execSQL("delete from " + TABLE_NAME + " where " + LIST_NAME + "=\'" + list + "\'");
     }
 
+    public void updateById(long id, Task task){
+        String title = task.getTitle();
+        String description = task.getDescription();
+        String date = task.getDate();
+        String time = task.getTime();
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(
+                "UPDATE "+TABLE_NAME+" SET "+TITLE+" = \'"+title+"\', "+DESCRIPTION+" = \'"+description+"\', "
+                        +DATE+" = \'"+date+"\', "+TIME+" = \'"+time+"\' where "+_ID+"="+id
+        );
+    }
+
     public Vector<Task> databaseToTask() {       // Function to return the database as Task
         Vector<Task> dbTask = new Vector<Task>();
         SQLiteDatabase db = getWritableDatabase();

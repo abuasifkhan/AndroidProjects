@@ -23,34 +23,9 @@ import java.util.Vector;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     dataBaseHandler myDatabase;
-    private String myListName;
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 666 && resultCode == Activity.RESULT_OK) {
-            Task newTask = (Task) data.getExtras().getSerializable("newTask");
-            myDatabase.addTask(newTask);
-            UpdateTaskList();
-        }
-    }
-
-    private void UpdateTaskList() {
-        Vector<Task> taskList;
-        taskList = myDatabase.databaseToTask();
-
-        ListAdapter adapter = new CustomAdapter(this, taskList);
-        ListView listView = (ListView) findViewById(R.id.taskListView);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: Do some works.
-                Task nowTask = (Task) parent.getItemAtPosition(position);
-                Toast.makeText(MainActivity.this, nowTask.getTitle(), Toast.LENGTH_LONG).show();
-
-            }
-        });
-    }
+    private String MYLISTNAME;
+    public static int REQ_FOR_ADD = 666;
+    public static int REQ_FOR_UPDATE = 667;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,18 +33,18 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        myListName = "all";
+        MYLISTNAME = "all";
         myDatabase = new dataBaseHandler(this, null, null, 1);
 
         UpdateTaskList();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {     // If Fab Button Clicked
+        fab.setOnClickListener(new View.OnClickListener() {                             // If Fab Button Clicked
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddNewActivity.class);
-                intent.putExtra("listName", myListName);
-                startActivityForResult(intent, 666);  // TODO: Send some data from intent from here.
+                intent.putExtra("listName", MYLISTNAME);
+                startActivityForResult(intent, REQ_FOR_ADD);
 //                Toast.makeText(getApplicationContext(),"Going to AddNew", Toast.LENGTH_LONG);
             }
         });
@@ -82,6 +57,32 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void UpdateTaskList() {
+        Vector<Task> taskList;
+        taskList = myDatabase.databaseToTask();
+
+        ListAdapter adapter = new CustomAdapter(this, taskList);
+        ListView listView = (ListView) findViewById(R.id.taskListView);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {                 // When click on list
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // TODO: Do some works.
+                Task nowTask = (Task) parent.getItemAtPosition(position);
+                Toast.makeText(MainActivity.this, nowTask.getTitle(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQ_FOR_ADD && resultCode == Activity.RESULT_OK) {   // RESULT FROM AddNewActivity Activity.
+            Task newTask = (Task) data.getExtras().getSerializable("newTask");
+            myDatabase.addTask(newTask);
+            UpdateTaskList();
+        }
     }
 
     @Override
@@ -124,15 +125,20 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_all) {
             // TODO: Show all Tasks
+            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_calendar) {
             // TODO: Show all Calendar tasks. It'll be for later use.
-
+//            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
+            calendarShowActivity calendar = new calendarShowActivity();
+            calendar.show(getFragmentManager(),null);
         } else if (id == R.id.nav_edit) {
             // TODO: New activity which edits the Drawers group list
+            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_settings) {
             // TODO: Setting. It'll be for later.
+            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
