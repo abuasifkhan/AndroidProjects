@@ -9,7 +9,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:hint="Title" />
+        android:hint="@string/titleInput" />
 
     <EditText
         android:layout_width="250dp"
@@ -17,7 +17,7 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/descriptionInput"
-        android:hint="Description"
+        android:hint="@string/descriptionInput"
         android:layout_below="@+id/titleInput"
         android:layout_alignLeft="@+id/titleInput"
         android:layout_alignStart="@+id/titleInput"

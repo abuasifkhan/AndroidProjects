@@ -53,7 +53,7 @@ public class dataBaseHandler extends SQLiteOpenHelper {
         task.set_id(id);
     }
 
-    public void deleteTask(int id) {
+    public void deleteTask(long id) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("delete from " + TABLE_NAME + " where " + _ID + "=" + id);
     }

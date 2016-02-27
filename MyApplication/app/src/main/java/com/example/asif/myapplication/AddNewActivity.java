@@ -18,14 +18,14 @@ public class AddNewActivity extends Activity {
     EditText givenTitle, givenDescription;
     TextView givenTime, givenDate;
     Button okButton, cancelButton;
-    String listName, title, decription, date, time;
+    String listName, title, description, date, time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addnew);
 
-        title = decription = date = time = null;
+        title = description = date = time = null;
         listName = getIntent().getExtras().getString("listName");
 
         givenTitle = (EditText) findViewById(R.id.titleInput);
@@ -61,18 +61,18 @@ public class AddNewActivity extends Activity {
             public void onClick(View v) {
 
                 title = givenTitle.getText().toString();
-                decription = givenDescription.getText().toString();
-                if (title == null || decription == null || date == null || time == null) {
+                description = givenDescription.getText().toString();
+                if (title == null || description == null || date == null || time == null) {
                     Toast.makeText(getBaseContext(), "Fill up all the fields please.", Toast.LENGTH_LONG).show();
                     return;
                 }
                 Intent iData = new Intent();
 //                iData.putExtra("listName",listName);
 //                iData.putExtra("title",title);
-//                iData.putExtra("description",decription);
+//                iData.putExtra("description",description);
 //                iData.putExtra("date",date);
 //                iData.putExtra("time", time);
-                Task newTask = new Task(listName, title, decription, date, time);
+                Task newTask = new Task(listName, title, description, date, time);
                 iData.putExtra("newTask", newTask);
                 //iData.putExtra("newTask", (Serializable)newTask);
                 setResult(Activity.RESULT_OK, iData);

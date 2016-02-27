@@ -13,5 +13,8 @@
     <string name="okButton">Ok</string>
     <string name="cancelButton">Cancel</string>
     <string name="TitleTextView">Title</string>
+    <string name="descriptionInput">Description</string>
     <string name="descriptionTextView">Description</string>
+    <string name="deleteOptionButton">Delete</string>
+    <string name="titleInput">Title</string>
 </resources>

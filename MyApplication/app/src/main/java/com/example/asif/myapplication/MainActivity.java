@@ -1,10 +1,12 @@
 package com.example.asif.myapplication;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,11 +23,21 @@ import android.widget.Toast;
 import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, longClickActivity.Communicator {
     dataBaseHandler myDatabase;
     private String MYLISTNAME;
+    private Task updateOrDelete;
     public static int REQ_FOR_ADD = 666;
     public static int REQ_FOR_UPDATE = 667;
+    public static int REQ_FOR_DELETE = 668;
+
+    @Override
+    public void onDeleteClick(boolean wannaDelete) {
+        if(wannaDelete){
+            myDatabase.deleteTask(updateOrDelete.get_id());
+            UpdateTaskList();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +77,31 @@ public class MainActivity extends AppCompatActivity
 
         ListAdapter adapter = new CustomAdapter(this, taskList);
         ListView listView = (ListView) findViewById(R.id.taskListView);
+
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {                 // When click on list
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // TODO: Do some works.
-                Task nowTask = (Task) parent.getItemAtPosition(position);
-                Toast.makeText(MainActivity.this, nowTask.getTitle(), Toast.LENGTH_SHORT).show();
+                updateOrDelete = (Task) parent.getItemAtPosition(position);
+//                Toast.makeText(MainActivity.this, updateOrDelete.getTitle(), Toast.LENGTH_SHORT).show();
+                Snackbar.make(view,"Title: "+updateOrDelete.getTitle()+"\n"+
+                        "Description: "+updateOrDelete.getDescription()+"\n"+
+                        "Date: "+updateOrDelete.getDate()+"\n"+
+                        "Time: "+updateOrDelete.getTime(),Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }
+        });
+
+        // TODO: List View Long Click Listener
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                updateOrDelete = (Task) parent.getItemAtPosition(position);
+
+                FragmentManager manager = getFragmentManager();
+                longClickActivity longclick = new longClickActivity();
+                longclick.show(manager,null);
+                return false;
             }
         });
     }
