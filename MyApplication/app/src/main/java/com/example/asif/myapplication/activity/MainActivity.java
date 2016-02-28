@@ -19,76 +19,58 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.example.asif.myapplication.adapter.CustomAdapter;
-import com.example.asif.myapplication.fragment.TaskViewFragment;
-import com.example.asif.myapplication.storage.DataBaseHandler;
-import com.example.asif.myapplication.fragment.TaskOptionDialogFragment;
 import com.example.asif.myapplication.R;
+import com.example.asif.myapplication.adapter.CustomAdapter;
+import com.example.asif.myapplication.fragment.TaskOptionDialogFragment;
+import com.example.asif.myapplication.fragment.TaskViewFragment;
 import com.example.asif.myapplication.pojo.Task;
+import com.example.asif.myapplication.storage.DataBaseHandler;
 
 import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TaskOptionDialogFragment.Communicator, TaskViewFragment.Communicator {
     DataBaseHandler myDatabase;
-    private String MYLISTNAME;
+    private String CURRENT_LIST_NAME;
     private Task updateOrDelete;
     public static int REQ_FOR_ADD = 666;
     public static int REQ_FOR_UPDATE = 667;
     public static int REQ_FOR_DELETE = 668;
+    private Vector<String> allList;
     private DrawerLayout drawerLayout;
-    @Override
-    public void onDeleteClick(int whatToDo) {
-        if(whatToDo==0){        // Delete Option Clicked.
-            myDatabase.deleteTask(updateOrDelete.get_id());
-            UpdateTaskList(MYLISTNAME);
-            Snackbar.make(drawerLayout,"Task Deleted!",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        myDatabase.addTask(updateOrDelete);
-                        UpdateTaskList(MYLISTNAME);
-                    }catch (NullPointerException e){}
-                }
-            }).show();
-        }
-        else if(whatToDo==1){    // Edit Option Clicked.
-            Intent intent = new Intent(MainActivity.this, AddNewActivity.class);
-            intent.putExtra("listName", MYLISTNAME);
-            intent.putExtra("titleName", updateOrDelete.getTitle());
-            intent.putExtra("descriptionName", updateOrDelete.getDescription());
-            startActivityForResult(intent, REQ_FOR_UPDATE);
-        }
-    }
-
-    @Override
-    public void onEditClick(boolean wannaEdit) {        // Method from TaskViewActivity for editing a task.
-        // TODO: Edit Option.
-        Intent intent = new Intent(MainActivity.this, AddNewActivity.class);
-        intent.putExtra("listName", MYLISTNAME);
-        intent.putExtra("titleName", updateOrDelete.getTitle());
-        intent.putExtra("descriptionName", updateOrDelete.getDescription());
-        startActivityForResult(intent, REQ_FOR_UPDATE);
-    }
+    private NavigationView navigationView;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        MYLISTNAME = "all";
         myDatabase = new DataBaseHandler(this, null, null, 1);
+        allList = new Vector<String>();
+        allList.addAll(myDatabase.getListNames());
+//        System.out.println("size: "+allList.size());
+        CURRENT_LIST_NAME = allList.elementAt(0);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        menu = navigationView.getMenu();
+//
+        for(int i=0;i<allList.size();i++){
+            String tmp = allList.elementAt(i);
+            menu.add(R.id.main_group,Menu.NONE,i,tmp);
+        }
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        UpdateTaskList(MYLISTNAME);
+        UpdateTaskList(CURRENT_LIST_NAME);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {                             // If Fab Button Clicked
+        fab.setOnClickListener(new View.OnClickListener() {                                         // If Fab Button Clicked
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddNewActivity.class);
-                intent.putExtra("listName", MYLISTNAME);
+                intent.putExtra("listName", CURRENT_LIST_NAME);
                 intent.putExtra("titleName","");
                 intent.putExtra("descriptionName","");
                 startActivityForResult(intent, REQ_FOR_ADD);
@@ -105,9 +87,45 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    @Override
+    public void onDeleteClick(int whatToDo) {
+        if(whatToDo==0){                                                                            // Delete Option Clicked.
+            myDatabase.deleteTask(updateOrDelete.get_id());
+            UpdateTaskList(CURRENT_LIST_NAME);
+            Snackbar.make(drawerLayout,"Task Deleted!",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        myDatabase.addTask(updateOrDelete);
+                        UpdateTaskList(CURRENT_LIST_NAME);
+                    }catch (NullPointerException e){
+                        System.out.println("NullPointerException caught!");
+                    }
+                }
+            }).show();
+        }
+        else if(whatToDo==1){                                               // Edit Option Clicked.
+            Intent intent = new Intent(MainActivity.this, AddNewActivity.class);
+            intent.putExtra("listName", CURRENT_LIST_NAME);
+            intent.putExtra("titleName", updateOrDelete.getTitle());
+            intent.putExtra("descriptionName", updateOrDelete.getDescription());
+            startActivityForResult(intent, REQ_FOR_UPDATE);
+        }
+    }
+
+    @Override
+    public void onEditClick(boolean wannaEdit) {                                                    // Method from TaskViewActivity for editing a task.
+        // TODO: Edit Option.
+        Intent intent = new Intent(MainActivity.this, AddNewActivity.class);
+        intent.putExtra("listName", CURRENT_LIST_NAME);
+        intent.putExtra("titleName", updateOrDelete.getTitle());
+        intent.putExtra("descriptionName", updateOrDelete.getDescription());
+        startActivityForResult(intent, REQ_FOR_UPDATE);
+    }
+
     private void UpdateTaskList(String listname) {
         final Vector<Task> taskList;
-        if(listname.equals(MYLISTNAME))
+        if(listname.equals(CURRENT_LIST_NAME))
             taskList = myDatabase.databaseToTask();
         else taskList = myDatabase.databaseToTask(listname);
 
@@ -115,7 +133,7 @@ public class MainActivity extends AppCompatActivity
         ListView listView = (ListView) findViewById(R.id.taskListView);
 
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {                 // When click on list
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {                     // When click on listView
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // TODO: Do some works.
@@ -126,16 +144,11 @@ public class MainActivity extends AppCompatActivity
                 args.putSerializable("newTask",updateOrDelete);
                 taskView.setArguments(args);
                 taskView.show(manager,null);
-//                Toast.makeText(MainActivity.this, updateOrDelete.getTitle(), Toast.LENGTH_SHORT).show();
-//                Snackbar.make(view,"Title: "+updateOrDelete.getTitle()+"\n"+
-//                        "Description: "+updateOrDelete.getDescription()+"\n"+
-//                        "Date: "+updateOrDelete.getDate()+"\n"+
-//                        "Time: "+updateOrDelete.getTime(),Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {             // When Click on LongClick on ListView
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 updateOrDelete = (Task) parent.getItemAtPosition(position);
@@ -150,33 +163,33 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQ_FOR_ADD && resultCode == Activity.RESULT_OK) {   // RESULT FROM AddNewActivity Activity for Adding Task.
+        if (requestCode == REQ_FOR_ADD && resultCode == Activity.RESULT_OK) {                       // RESULT FROM AddNewActivity Activity for Adding Task.
             final Task newTask = (Task) data.getExtras().getSerializable("newTask");
             myDatabase.addTask(newTask);
-            UpdateTaskList(MYLISTNAME);
+            UpdateTaskList(CURRENT_LIST_NAME);
 
             Snackbar.make(drawerLayout,"Task added!",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
                         myDatabase.deleteTask(newTask.get_id());
-                        UpdateTaskList(MYLISTNAME);
+                        UpdateTaskList(CURRENT_LIST_NAME);
                     }catch (NullPointerException e){
                         System.out.println("Null Pointer Caught!");
                     }
                 }
             }).show();
         }
-        else if(requestCode==REQ_FOR_UPDATE && resultCode==Activity.RESULT_OK){     // RESULT from AddNewActivity Activity for Updating a Task.
+        else if(requestCode==REQ_FOR_UPDATE && resultCode==Activity.RESULT_OK){                     // RESULT from AddNewActivity Activity for Updating a Task.
             Task newTask = (Task) data.getExtras().getSerializable("newTask");
             myDatabase.updateById(updateOrDelete.get_id(), newTask);
-            UpdateTaskList(MYLISTNAME);
+            UpdateTaskList(CURRENT_LIST_NAME);
             Snackbar.make(drawerLayout,"Task Updated!",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try{
                         myDatabase.updateById(updateOrDelete.get_id(),updateOrDelete);
-                        UpdateTaskList(MYLISTNAME);
+                        UpdateTaskList(CURRENT_LIST_NAME);
                     }catch(NullPointerException e) {
                         System.out.println("Null Pointer Caught!");
                     }
@@ -227,7 +240,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_all) {
             // TODO: Show all Tasks
 //            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
-            UpdateTaskList(MYLISTNAME);
+            UpdateTaskList(CURRENT_LIST_NAME);
 //            Snackbar.make(drawerLayout,"Method not Implemented Yet. Coming Soon.",Snackbar.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_calendar) {

@@ -16,7 +16,8 @@ import java.util.Vector;
 public class DataBaseHandler extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "task.db";
     public static final int DATABASE_VERSION = 1;
-    public static final String TABLE_NAME = "tasktable";
+    public static final String TASK_TABLE_NAME = "tasktable";
+    public static final String LIST_TABLE_NAME = "listtablename";
     public static final String _ID = "id";
     public static final String LIST_NAME = "listname";
     public static final String TITLE = "title";
@@ -31,13 +32,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
-                "create table " + TABLE_NAME + " ( " + _ID + " integer primary key autoincrement, " + LIST_NAME + " text, " + TITLE + " text, " + DESCRIPTION + " text, " + DATE + " text, " + TIME + " text);"
+                "create table " + TASK_TABLE_NAME + " ( " + _ID + " integer primary key autoincrement, " + LIST_NAME
+                        + " text, " + TITLE + " text, " + DESCRIPTION + " text, " + DATE + " text, " + TIME + " text);"
+        );
+        db.execSQL(
+                "create table "+LIST_TABLE_NAME+" ("+_ID+" integer primary key autoincrement, "+LIST_NAME+" text)"+";"
         );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("drop table if exists " + TABLE_NAME);
+        db.execSQL("drop table if exists " + TASK_TABLE_NAME);
+        db.execSQL("drop table if exists "+LIST_TABLE_NAME);
         onCreate(db);
     }
 
@@ -50,19 +56,19 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         values.put(TIME, task.getTime());
 
         SQLiteDatabase db = getWritableDatabase();
-        long id = db.insertOrThrow(TABLE_NAME, null, values);
+        long id = db.insertOrThrow(TASK_TABLE_NAME, null, values);
         db.close();
         task.set_id(id);
     }
 
     public void deleteTask(long id) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("delete from " + TABLE_NAME + " where " + _ID + "=" + id);
+        db.execSQL("delete from " + TASK_TABLE_NAME + " where " + _ID + "=" + id);
     }
 
     public void deleteList(String list) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("delete from " + TABLE_NAME + " where " + LIST_NAME + "=\'" + list + "\'");
+        db.execSQL("delete from " + TASK_TABLE_NAME + " where " + LIST_NAME + "=\'" + list + "\'");
     }
 
     public void updateById(long id, Task task){
@@ -73,7 +79,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(
-                "UPDATE "+TABLE_NAME+" SET "+TITLE+" = \'"+title+"\', "+DESCRIPTION+" = \'"+description+"\', "
+                "UPDATE "+ TASK_TABLE_NAME +" SET "+TITLE+" = \'"+title+"\', "+DESCRIPTION+" = \'"+description+"\', "
                         +DATE+" = \'"+date+"\', "+TIME+" = \'"+time+"\' where "+_ID+"="+id
         );
     }
@@ -81,7 +87,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public Vector<Task> databaseToTask() {       // Function to return the database as Task
         Vector<Task> dbTask = new Vector<Task>();
         SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_NAME + ";";
+        String query = "SELECT * FROM " + TASK_TABLE_NAME + "ORDERED BY "+TITLE+" ASC"+
+                ";";
 
         // Cursor point to a location in your results
         Cursor c = db.rawQuery(query, null);
@@ -107,7 +114,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public Vector<Task> databaseToTask(String listName){
         Vector<Task> dbTask = new Vector<Task>();
         SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_NAME + "WHERE "+LIST_NAME+" = \'"+listName+"\';";
+        String query = "SELECT * FROM " + TASK_TABLE_NAME + "WHERE "+LIST_NAME+" = \'"+listName+"\'"+ " ORDERED BY "+TITLE+" ASC"+
+                ";";
 
         // Cursor point to a location in your results
         Cursor c = db.rawQuery(query, null);
@@ -128,5 +136,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.close();
 
         return dbTask;
+    }
+
+    public Vector<String> getListNames(){
+        Vector<String>allLists=new Vector<String>();
+        allLists.add("all");
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT DISTINCT "+LIST_NAME+" FROM "+ LIST_TABLE_NAME +";";
+
+        Cursor c = db.rawQuery(query,null);
+        c.moveToFirst();
+        if(c.getCount()>0){
+            do{
+                if(c.getString(c.getColumnIndex(_ID))!=null){
+                    String ln = c.getString(c.getColumnIndex(LIST_NAME));
+                    allLists.add(ln);
+                }
+            }while(c.moveToNext());
+        }
+        db.close();
+        c.close();
+        return allLists;
     }
 }
