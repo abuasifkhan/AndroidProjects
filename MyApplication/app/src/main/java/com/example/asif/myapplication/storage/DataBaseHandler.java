@@ -1,4 +1,4 @@
-package com.example.asif.myapplication;
+package com.example.asif.myapplication.storage;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,12 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.asif.myapplication.pojo.Task;
+
 import java.util.Vector;
 
 /**
  * Created by asif on 25/02/16.
  */
-public class dataBaseHandler extends SQLiteOpenHelper {
+public class DataBaseHandler extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "task.db";
     public static final int DATABASE_VERSION = 1;
     public static final String TABLE_NAME = "tasktable";
@@ -22,7 +24,7 @@ public class dataBaseHandler extends SQLiteOpenHelper {
     public static final String DATE = "date";
     public static final String TIME = "time";
 
-    public dataBaseHandler(Context context, String dataName, SQLiteDatabase.CursorFactory factory, int version) {
+    public DataBaseHandler(Context context, String dataName, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
     }
 
@@ -80,6 +82,32 @@ public class dataBaseHandler extends SQLiteOpenHelper {
         Vector<Task> dbTask = new Vector<Task>();
         SQLiteDatabase db = getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_NAME + ";";
+
+        // Cursor point to a location in your results
+        Cursor c = db.rawQuery(query, null);
+        // Move to first row in your results
+        c.moveToFirst();
+        if (c.getCount() > 0)
+            do {
+                if (c.getString(c.getColumnIndex(_ID)) != null) {
+                    long id = c.getInt(c.getColumnIndex(_ID));
+                    String ln = c.getString(c.getColumnIndex(LIST_NAME));
+                    String title = c.getString(c.getColumnIndex(TITLE));
+                    String dec = c.getString(c.getColumnIndex(DESCRIPTION));
+                    String dt = c.getString(c.getColumnIndex(DATE));
+                    String tm = c.getString(c.getColumnIndex(TIME));
+                    dbTask.add(new Task(id, ln, title, dec, dt, tm));
+                }
+            } while (c.moveToNext());
+        db.close();
+
+        return dbTask;
+    }
+
+    public Vector<Task> databaseToTask(String listName){
+        Vector<Task> dbTask = new Vector<Task>();
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME + "WHERE "+LIST_NAME+" = \'"+listName+"\';";
 
         // Cursor point to a location in your results
         Cursor c = db.rawQuery(query, null);

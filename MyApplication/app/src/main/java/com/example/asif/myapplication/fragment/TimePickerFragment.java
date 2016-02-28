@@ -1,4 +1,4 @@
-package com.example.asif.myapplication;
+package com.example.asif.myapplication.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,10 +7,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TimePicker;
 
+import com.example.asif.myapplication.R;
+
 /**
  * Created by asif on 23/02/16.
  */
-public class TimePickerActivity extends Activity {
+public class TimePickerFragment extends Activity {
     private Button timeButton;
     private TimePicker timePicker;
 

@@ -1,8 +1,7 @@
-package com.example.asif.myapplication;
+package com.example.asif.myapplication.fragment;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -11,10 +10,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.asif.myapplication.R;
+import com.example.asif.myapplication.pojo.Task;
+
 /**
  * Created by asif on 28/02/16.
  */
-public class taskViewActivity extends DialogFragment {
+public class TaskViewFragment extends DialogFragment {
     Communicator communicator;
     Button editButton;
 
@@ -23,7 +25,7 @@ public class taskViewActivity extends DialogFragment {
         super.onAttach(activity);
         communicator = (Communicator) activity;
     }
-    interface Communicator{
+    public interface Communicator{
         public void onEditClick(boolean wannaEdit);
     }
 

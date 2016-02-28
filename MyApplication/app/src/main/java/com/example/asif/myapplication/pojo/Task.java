@@ -1,4 +1,4 @@
-package com.example.asif.myapplication;
+package com.example.asif.myapplication.pojo;
 
 import java.io.Serializable;
 

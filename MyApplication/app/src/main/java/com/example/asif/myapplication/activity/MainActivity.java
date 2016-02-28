@@ -1,10 +1,9 @@
-package com.example.asif.myapplication;
+package com.example.asif.myapplication.activity;
 
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -19,14 +18,19 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import java.util.Timer;
+import com.example.asif.myapplication.adapter.CustomAdapter;
+import com.example.asif.myapplication.fragment.TaskViewFragment;
+import com.example.asif.myapplication.storage.DataBaseHandler;
+import com.example.asif.myapplication.fragment.TaskOptionDialogFragment;
+import com.example.asif.myapplication.R;
+import com.example.asif.myapplication.pojo.Task;
+
 import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, longClickActivity.Communicator, taskViewActivity.Communicator {
-    dataBaseHandler myDatabase;
+        implements NavigationView.OnNavigationItemSelectedListener, TaskOptionDialogFragment.Communicator, TaskViewFragment.Communicator {
+    DataBaseHandler myDatabase;
     private String MYLISTNAME;
     private Task updateOrDelete;
     public static int REQ_FOR_ADD = 666;
@@ -37,13 +41,13 @@ public class MainActivity extends AppCompatActivity
     public void onDeleteClick(int whatToDo) {
         if(whatToDo==0){        // Delete Option Clicked.
             myDatabase.deleteTask(updateOrDelete.get_id());
-            UpdateTaskList();
+            UpdateTaskList(MYLISTNAME);
             Snackbar.make(drawerLayout,"Task Deleted!",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
                         myDatabase.addTask(updateOrDelete);
-                        UpdateTaskList();
+                        UpdateTaskList(MYLISTNAME);
                     }catch (NullPointerException e){}
                 }
             }).show();
@@ -51,7 +55,7 @@ public class MainActivity extends AppCompatActivity
         else if(whatToDo==1){    // Edit Option Clicked.
             Intent intent = new Intent(MainActivity.this, AddNewActivity.class);
             intent.putExtra("listName", MYLISTNAME);
-            intent.putExtra("titleName",updateOrDelete.getTitle());
+            intent.putExtra("titleName", updateOrDelete.getTitle());
             intent.putExtra("descriptionName", updateOrDelete.getDescription());
             startActivityForResult(intent, REQ_FOR_UPDATE);
         }
@@ -60,6 +64,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onEditClick(boolean wannaEdit) {        // Method from TaskViewActivity for editing a task.
         // TODO: Edit Option.
+        Intent intent = new Intent(MainActivity.this, AddNewActivity.class);
+        intent.putExtra("listName", MYLISTNAME);
+        intent.putExtra("titleName", updateOrDelete.getTitle());
+        intent.putExtra("descriptionName", updateOrDelete.getDescription());
+        startActivityForResult(intent, REQ_FOR_UPDATE);
     }
 
     @Override
@@ -69,10 +78,10 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         MYLISTNAME = "all";
-        myDatabase = new dataBaseHandler(this, null, null, 1);
+        myDatabase = new DataBaseHandler(this, null, null, 1);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        UpdateTaskList();
+        UpdateTaskList(MYLISTNAME);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {                             // If Fab Button Clicked
@@ -96,9 +105,11 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void UpdateTaskList() {
+    private void UpdateTaskList(String listname) {
         final Vector<Task> taskList;
-        taskList = myDatabase.databaseToTask();
+        if(listname.equals(MYLISTNAME))
+            taskList = myDatabase.databaseToTask();
+        else taskList = myDatabase.databaseToTask(listname);
 
         ListAdapter adapter = new CustomAdapter(this, taskList);
         ListView listView = (ListView) findViewById(R.id.taskListView);
@@ -110,7 +121,7 @@ public class MainActivity extends AppCompatActivity
                 // TODO: Do some works.
                 updateOrDelete = (Task) parent.getItemAtPosition(position);
                 FragmentManager manager = getFragmentManager();
-                taskViewActivity taskView = new taskViewActivity();
+                TaskViewFragment taskView = new TaskViewFragment();
                 Bundle args = new Bundle();
                 args.putSerializable("newTask",updateOrDelete);
                 taskView.setArguments(args);
@@ -130,7 +141,7 @@ public class MainActivity extends AppCompatActivity
                 updateOrDelete = (Task) parent.getItemAtPosition(position);
 
                 FragmentManager manager = getFragmentManager();
-                longClickActivity longclick = new longClickActivity();
+                TaskOptionDialogFragment longclick = new TaskOptionDialogFragment();
                 longclick.show(manager,null);
                 return true;
             }
@@ -142,14 +153,14 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == REQ_FOR_ADD && resultCode == Activity.RESULT_OK) {   // RESULT FROM AddNewActivity Activity for Adding Task.
             final Task newTask = (Task) data.getExtras().getSerializable("newTask");
             myDatabase.addTask(newTask);
-            UpdateTaskList();
+            UpdateTaskList(MYLISTNAME);
 
             Snackbar.make(drawerLayout,"Task added!",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
                         myDatabase.deleteTask(newTask.get_id());
-                        UpdateTaskList();
+                        UpdateTaskList(MYLISTNAME);
                     }catch (NullPointerException e){
                         System.out.println("Null Pointer Caught!");
                     }
@@ -159,13 +170,13 @@ public class MainActivity extends AppCompatActivity
         else if(requestCode==REQ_FOR_UPDATE && resultCode==Activity.RESULT_OK){     // RESULT from AddNewActivity Activity for Updating a Task.
             Task newTask = (Task) data.getExtras().getSerializable("newTask");
             myDatabase.updateById(updateOrDelete.get_id(), newTask);
-            UpdateTaskList();
+            UpdateTaskList(MYLISTNAME);
             Snackbar.make(drawerLayout,"Task Updated!",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try{
                         myDatabase.updateById(updateOrDelete.get_id(),updateOrDelete);
-                        UpdateTaskList();
+                        UpdateTaskList(MYLISTNAME);
                     }catch(NullPointerException e) {
                         System.out.println("Null Pointer Caught!");
                     }
@@ -216,7 +227,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_all) {
             // TODO: Show all Tasks
 //            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
-            Snackbar.make(drawerLayout,"Method not Implemented Yet. Coming Soon.",Snackbar.LENGTH_SHORT).show();
+            UpdateTaskList(MYLISTNAME);
+//            Snackbar.make(drawerLayout,"Method not Implemented Yet. Coming Soon.",Snackbar.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_calendar) {
             // TODO: Show all Calendar tasks. It'll be for later use.

@@ -1,4 +1,4 @@
-package com.example.asif.myapplication;
+package com.example.asif.myapplication.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,10 +8,12 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
+import com.example.asif.myapplication.R;
+
 /**
  * Created by asif on 23/02/16.
  */
-public class DatePickerActivity extends Activity {
+public class DatePickerFragment extends Activity {
     DatePicker datePicker;
     Button button;
 

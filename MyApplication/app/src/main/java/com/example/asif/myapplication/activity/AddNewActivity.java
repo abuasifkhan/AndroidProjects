@@ -1,4 +1,4 @@
-package com.example.asif.myapplication;
+package com.example.asif.myapplication.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.asif.myapplication.R;
+import com.example.asif.myapplication.fragment.DatePickerFragment;
+import com.example.asif.myapplication.fragment.TimePickerFragment;
+import com.example.asif.myapplication.pojo.Task;
 
 /**
  * Created by asif on 23/02/16.
@@ -40,7 +45,7 @@ public class AddNewActivity extends Activity {
         givenTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(AddNewActivity.this, TimePickerActivity.class);
+                Intent i = new Intent(AddNewActivity.this, TimePickerFragment.class);
 //                Calendar cal = Calendar.getInstance(TimeZone.getDefault());
 //                i.putExtra("currHour",cal.get(Calendar.HOUR));
 //                i.putExtra("currMin", cal.get(Calendar.MINUTE));
@@ -51,7 +56,7 @@ public class AddNewActivity extends Activity {
         givenDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(AddNewActivity.this, DatePickerActivity.class);
+                Intent i = new Intent(AddNewActivity.this, DatePickerFragment.class);
 //                Calendar cal = Calendar.getInstance(TimeZone.getDefault());
 //                i.putExtra("currMonth",cal.MONTH);
 //                i.putExtra("currYear",cal.YEAR);
