@@ -17,4 +17,5 @@
     <string name="descriptionTextView">Description</string>
     <string name="deleteOptionButton">Delete</string>
     <string name="titleInput">Title</string>
+    <string name="onDetailsEditButton">Edit</string>
 </resources>

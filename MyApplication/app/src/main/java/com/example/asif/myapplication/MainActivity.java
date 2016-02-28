@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -20,23 +21,45 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.Timer;
 import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, longClickActivity.Communicator {
+        implements NavigationView.OnNavigationItemSelectedListener, longClickActivity.Communicator, taskViewActivity.Communicator {
     dataBaseHandler myDatabase;
     private String MYLISTNAME;
     private Task updateOrDelete;
     public static int REQ_FOR_ADD = 666;
     public static int REQ_FOR_UPDATE = 667;
     public static int REQ_FOR_DELETE = 668;
-
+    private DrawerLayout drawerLayout;
     @Override
-    public void onDeleteClick(boolean wannaDelete) {
-        if(wannaDelete){
+    public void onDeleteClick(int whatToDo) {
+        if(whatToDo==0){        // Delete Option Clicked.
             myDatabase.deleteTask(updateOrDelete.get_id());
             UpdateTaskList();
+            Snackbar.make(drawerLayout,"Task Deleted!",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        myDatabase.addTask(updateOrDelete);
+                        UpdateTaskList();
+                    }catch (NullPointerException e){}
+                }
+            }).show();
         }
+        else if(whatToDo==1){    // Edit Option Clicked.
+            Intent intent = new Intent(MainActivity.this, AddNewActivity.class);
+            intent.putExtra("listName", MYLISTNAME);
+            intent.putExtra("titleName",updateOrDelete.getTitle());
+            intent.putExtra("descriptionName", updateOrDelete.getDescription());
+            startActivityForResult(intent, REQ_FOR_UPDATE);
+        }
+    }
+
+    @Override
+    public void onEditClick(boolean wannaEdit) {        // Method from TaskViewActivity for editing a task.
+        // TODO: Edit Option.
     }
 
     @Override
@@ -47,6 +70,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         MYLISTNAME = "all";
         myDatabase = new dataBaseHandler(this, null, null, 1);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         UpdateTaskList();
 
@@ -56,15 +80,16 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddNewActivity.class);
                 intent.putExtra("listName", MYLISTNAME);
+                intent.putExtra("titleName","");
+                intent.putExtra("descriptionName","");
                 startActivityForResult(intent, REQ_FOR_ADD);
 //                Toast.makeText(getApplicationContext(),"Going to AddNew", Toast.LENGTH_LONG);
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -72,7 +97,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void UpdateTaskList() {
-        Vector<Task> taskList;
+        final Vector<Task> taskList;
         taskList = myDatabase.databaseToTask();
 
         ListAdapter adapter = new CustomAdapter(this, taskList);
@@ -84,15 +109,21 @@ public class MainActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // TODO: Do some works.
                 updateOrDelete = (Task) parent.getItemAtPosition(position);
+                FragmentManager manager = getFragmentManager();
+                taskViewActivity taskView = new taskViewActivity();
+                Bundle args = new Bundle();
+                args.putSerializable("newTask",updateOrDelete);
+                taskView.setArguments(args);
+                taskView.show(manager,null);
 //                Toast.makeText(MainActivity.this, updateOrDelete.getTitle(), Toast.LENGTH_SHORT).show();
-                Snackbar.make(view,"Title: "+updateOrDelete.getTitle()+"\n"+
-                        "Description: "+updateOrDelete.getDescription()+"\n"+
-                        "Date: "+updateOrDelete.getDate()+"\n"+
-                        "Time: "+updateOrDelete.getTime(),Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//                Snackbar.make(view,"Title: "+updateOrDelete.getTitle()+"\n"+
+//                        "Description: "+updateOrDelete.getDescription()+"\n"+
+//                        "Date: "+updateOrDelete.getDate()+"\n"+
+//                        "Time: "+updateOrDelete.getTime(),Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 
-        // TODO: List View Long Click Listener
+
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -101,17 +132,45 @@ public class MainActivity extends AppCompatActivity
                 FragmentManager manager = getFragmentManager();
                 longClickActivity longclick = new longClickActivity();
                 longclick.show(manager,null);
-                return false;
+                return true;
             }
         });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQ_FOR_ADD && resultCode == Activity.RESULT_OK) {   // RESULT FROM AddNewActivity Activity.
-            Task newTask = (Task) data.getExtras().getSerializable("newTask");
+        if (requestCode == REQ_FOR_ADD && resultCode == Activity.RESULT_OK) {   // RESULT FROM AddNewActivity Activity for Adding Task.
+            final Task newTask = (Task) data.getExtras().getSerializable("newTask");
             myDatabase.addTask(newTask);
             UpdateTaskList();
+
+            Snackbar.make(drawerLayout,"Task added!",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        myDatabase.deleteTask(newTask.get_id());
+                        UpdateTaskList();
+                    }catch (NullPointerException e){
+                        System.out.println("Null Pointer Caught!");
+                    }
+                }
+            }).show();
+        }
+        else if(requestCode==REQ_FOR_UPDATE && resultCode==Activity.RESULT_OK){     // RESULT from AddNewActivity Activity for Updating a Task.
+            Task newTask = (Task) data.getExtras().getSerializable("newTask");
+            myDatabase.updateById(updateOrDelete.get_id(), newTask);
+            UpdateTaskList();
+            Snackbar.make(drawerLayout,"Task Updated!",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try{
+                        myDatabase.updateById(updateOrDelete.get_id(),updateOrDelete);
+                        UpdateTaskList();
+                    }catch(NullPointerException e) {
+                        System.out.println("Null Pointer Caught!");
+                    }
+                }
+            }).show();
         }
     }
 
@@ -141,6 +200,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Snackbar.make(drawerLayout,"Method not Implemented Yet. Coming Soon.",Snackbar.LENGTH_SHORT).show();
             return true;
         }
 
@@ -155,20 +215,20 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_all) {
             // TODO: Show all Tasks
-            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
+            Snackbar.make(drawerLayout,"Method not Implemented Yet. Coming Soon.",Snackbar.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_calendar) {
             // TODO: Show all Calendar tasks. It'll be for later use.
 //            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
-            calendarShowActivity calendar = new calendarShowActivity();
-            calendar.show(getFragmentManager(),null);
+            Snackbar.make(drawerLayout,"Method not Implemented Yet. Coming Soon.",Snackbar.LENGTH_SHORT).show();
         } else if (id == R.id.nav_edit) {
             // TODO: New activity which edits the Drawers group list
-            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
+            Snackbar.make(drawerLayout, "Method not Implemented Yet. Coming Soon.", Snackbar.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_settings) {
             // TODO: Setting. It'll be for later.
-            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
+            Snackbar.make(drawerLayout, "Method not Implemented Yet. Coming Soon.", Snackbar.LENGTH_SHORT).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

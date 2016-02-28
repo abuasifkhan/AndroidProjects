@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/titleViewDetails"
+        android:layout_alignParentTop="true"
+        android:textAlignment="center"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/descriptionViewDetails"
+        android:layout_below="@+id/titleViewDetails"
+        android:textAlignment="center"
+        android:layout_alignStart="@+id/titleViewDetails" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/dateViewDetails"
+        android:textAlignment="center"
+        android:layout_below="@+id/descriptionViewDetails"
+        android:layout_alignStart="@+id/descriptionViewDetails" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/timeViewDetails"
+        android:textAlignment="center"
+        android:layout_below="@+id/dateViewDetails"
+        android:layout_alignStart="@+id/dateViewDetails" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/onDetailsEditButton"
+        android:id="@+id/onDetailsEditButton"
+        android:layout_below="@+id/timeViewDetails"
+        android:layout_centerHorizontal="true"
+        android:textColor="#013cfd" />
+</RelativeLayout>

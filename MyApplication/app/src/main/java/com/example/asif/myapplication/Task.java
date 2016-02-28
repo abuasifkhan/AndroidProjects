@@ -17,7 +17,7 @@ public class Task implements Serializable {
         Time = time;
     }
 
-    public Task(int id, String ListName, String title, String description, String date, String time) {
+    public Task(long id, String ListName, String title, String description, String date, String time) {
         listName = ListName;
         Title = title;
         Description = description;

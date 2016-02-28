@@ -10,4 +10,13 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:textColor="#f00a0a" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/onDetailsEditButton"
+        android:id="@+id/onOptionEditButton"
+        android:layout_below="@+id/deleteOptionButton"
+        android:layout_centerHorizontal="true"
+        android:textColor="#0532fa" />
 </RelativeLayout>

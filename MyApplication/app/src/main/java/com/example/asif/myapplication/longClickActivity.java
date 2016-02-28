@@ -14,7 +14,7 @@ import android.widget.Button;
  */
 public class longClickActivity extends DialogFragment {
     Communicator communicator;
-
+    Button deleteButton,editButton;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -26,11 +26,21 @@ public class longClickActivity extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().setTitle("Option");
         View view = inflater.inflate(R.layout.long_click_optionbar,container,false);
-        Button deleteButton = (Button) view.findViewById(R.id.deleteOptionButton);
+
+        deleteButton = (Button) view.findViewById(R.id.deleteOptionButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                communicator.onDeleteClick(true);
+                communicator.onDeleteClick(0);
+                dismiss();
+            }
+        });
+
+        editButton = (Button) view.findViewById(R.id.onOptionEditButton);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                communicator.onDeleteClick(1);
                 dismiss();
             }
         });
@@ -39,6 +49,6 @@ public class longClickActivity extends DialogFragment {
     }
 
     interface Communicator{
-        public void onDeleteClick(boolean wannaDelete);
+        public void onDeleteClick(int wannaDelete);
     }
 }

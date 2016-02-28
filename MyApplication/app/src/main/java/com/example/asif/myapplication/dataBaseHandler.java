@@ -88,7 +88,7 @@ public class dataBaseHandler extends SQLiteOpenHelper {
         if (c.getCount() > 0)
             do {
                 if (c.getString(c.getColumnIndex(_ID)) != null) {
-                    int id = c.getInt(c.getColumnIndex(_ID));
+                    long id = c.getInt(c.getColumnIndex(_ID));
                     String ln = c.getString(c.getColumnIndex(LIST_NAME));
                     String title = c.getString(c.getColumnIndex(TITLE));
                     String dec = c.getString(c.getColumnIndex(DESCRIPTION));

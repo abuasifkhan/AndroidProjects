@@ -29,9 +29,14 @@ public class AddNewActivity extends Activity {
         listName = getIntent().getExtras().getString("listName");
 
         givenTitle = (EditText) findViewById(R.id.titleInput);
-        givenDescription = (EditText) findViewById(R.id.descriptionInput);
-
         givenTime = (TextView) findViewById(R.id.timeInput);
+        givenDescription = (EditText) findViewById(R.id.descriptionInput);
+        givenDate = (TextView) findViewById(R.id.dateInput);
+        okButton = (Button) findViewById(R.id.okButton);
+        cancelButton = (Button) findViewById(R.id.cancelButton);
+
+        putData();
+
         givenTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,7 +48,6 @@ public class AddNewActivity extends Activity {
             }
         });
 
-        givenDate = (TextView) findViewById(R.id.dateInput);
         givenDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,14 +59,13 @@ public class AddNewActivity extends Activity {
             }
         });
 
-        okButton = (Button) findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 title = givenTitle.getText().toString();
                 description = givenDescription.getText().toString();
-                if (title == null || description == null || date == null || time == null) {
+                if (title == "" || description == "" || date == "" || time == "") {
                     Toast.makeText(getBaseContext(), "Fill up all the fields please.", Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -80,7 +83,6 @@ public class AddNewActivity extends Activity {
             }
         });
 
-        cancelButton = (Button) findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,5 +114,13 @@ public class AddNewActivity extends Activity {
                 time = givenTime.getText().toString();
             }
         }
+    }
+
+    private void putData(){
+        Intent i = getIntent();
+        String title=i.getExtras().getString("titleName");
+        String description = i.getExtras().getString("descriptionName");
+        if(title!="") givenTitle.setText(title);
+        if(description!="")givenDescription.setText(description);
     }
 }
