@@ -14,10 +14,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.asif.myapplication.R;
 import com.example.asif.myapplication.adapter.CustomAdapter;
@@ -36,10 +38,32 @@ public class MainActivity extends AppCompatActivity
     public static int REQ_FOR_ADD = 666;
     public static int REQ_FOR_UPDATE = 667;
     public static int REQ_FOR_DELETE = 668;
-    private Vector<String> allList;
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private Menu menu;
+    private Vector<String> allList;
+
+    private void setNavigationView(){                                                               // Method for setting up NavigationView
+        allList = new Vector<String>();
+        allList.addAll(myDatabase.getListNames());
+        NavigationView navigationView1 = (NavigationView) findViewById(R.id.nav_view);
+
+        Menu menu = navigationView1.getMenu();
+
+        // SubMenu sm = menu.addSubMenu("Custom Lists");
+        menu.add(R.id.main_group, 1, 0, "All");
+        menu.getItem(0).setIcon(android.R.drawable.ic_menu_agenda);
+        menu.performIdentifierAction(R.id.main_group,0);
+        menu.add(R.id.main_group, 11, 555, "Calendar");
+        menu.getItem(1).setIcon(android.R.drawable.ic_menu_my_calendar);
+
+        for(int i=0;i< allList.size();i++){
+            String tmp = allList.elementAt(i);
+            menu.add(R.id.main_group,(i+1)*100,i+2,tmp);
+            menu.getItem(i+1).setIcon(R.drawable.headline_black);
+            //  sm.add(Menu.NONE,i*100,1,tmp);
+            // System.out.println(sm.size());
+        }
+        CURRENT_LIST_NAME="All";
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,17 +73,11 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         myDatabase = new DataBaseHandler(this, null, null, 1);
-        allList = new Vector<String>();
-        allList.addAll(myDatabase.getListNames());
 //        System.out.println("size: "+allList.size());
+
+        setNavigationView();
+
         CURRENT_LIST_NAME = allList.elementAt(0);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        menu = navigationView.getMenu();
-//
-        for(int i=0;i<allList.size();i++){
-            String tmp = allList.elementAt(i);
-            menu.add(R.id.main_group,Menu.NONE,i,tmp);
-        }
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -69,6 +87,10 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {                                         // If Fab Button Clicked
             @Override
             public void onClick(View view) {
+                if(CURRENT_LIST_NAME.equals("All") || CURRENT_LIST_NAME.equals("All")){
+                    Toast.makeText(MainActivity.this,"Please select a list to add.",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(MainActivity.this, AddNewActivity.class);
                 intent.putExtra("listName", CURRENT_LIST_NAME);
                 intent.putExtra("titleName","");
@@ -123,11 +145,12 @@ public class MainActivity extends AppCompatActivity
         startActivityForResult(intent, REQ_FOR_UPDATE);
     }
 
-    private void UpdateTaskList(String listname) {
+    private void UpdateTaskList(String listName) {
         final Vector<Task> taskList;
-        if(listname.equals(CURRENT_LIST_NAME))
+        // TODO: works here!
+        if(listName.equals("All"))
             taskList = myDatabase.databaseToTask();
-        else taskList = myDatabase.databaseToTask(listname);
+        else taskList = myDatabase.databaseToTask(listName);
 
         ListAdapter adapter = new CustomAdapter(this, taskList);
         ListView listView = (ListView) findViewById(R.id.taskListView);
@@ -236,24 +259,34 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_all) {
-            // TODO: Show all Tasks
-//            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
-            UpdateTaskList(CURRENT_LIST_NAME);
+        System.out.println(id+" "+item.getTitle());
+//        if (id == R.id.nav_all) {
+//            // TODO: Show all Tasks
+////            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
+//           // UpdateTaskList("");
+////            Snackbar.make(drawerLayout,"Method not Implemented Yet. Coming Soon.",Snackbar.LENGTH_SHORT).show();
+//
+//        } else if (id == R.id.nav_calendar) {
+//            // TODO: Show all Calendar tasks. It'll be for later use.
+////            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
 //            Snackbar.make(drawerLayout,"Method not Implemented Yet. Coming Soon.",Snackbar.LENGTH_SHORT).show();
-
-        } else if (id == R.id.nav_calendar) {
-            // TODO: Show all Calendar tasks. It'll be for later use.
-//            Toast.makeText(getBaseContext(),"Method not implemented yet.",Toast.LENGTH_SHORT).show();
-            Snackbar.make(drawerLayout,"Method not Implemented Yet. Coming Soon.",Snackbar.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_edit) {
+//        } else
+        if (id == R.id.nav_edit) {
             // TODO: New activity which edits the Drawers group list
             Snackbar.make(drawerLayout, "Method not Implemented Yet. Coming Soon.", Snackbar.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_settings) {
             // TODO: Setting. It'll be for later.
             Snackbar.make(drawerLayout, "Method not Implemented Yet. Coming Soon.", Snackbar.LENGTH_SHORT).show();
+        }
+        else if(item.getTitle().toString().equals("All") ){
+            CURRENT_LIST_NAME = item.getTitle().toString();
+        }
+        else if(item.getTitle().toString().equals("Calendar")){
+            CURRENT_LIST_NAME = item.getTitle().toString();
+        }
+        else{
+            CURRENT_LIST_NAME = item.getTitle().toString();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

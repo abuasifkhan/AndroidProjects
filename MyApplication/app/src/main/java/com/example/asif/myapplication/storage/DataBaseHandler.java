@@ -87,7 +87,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public Vector<Task> databaseToTask() {       // Function to return the database as Task
         Vector<Task> dbTask = new Vector<Task>();
         SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM " + TASK_TABLE_NAME + "ORDERED BY "+TITLE+" ASC"+
+        String query = "SELECT * FROM " + TASK_TABLE_NAME + " ORDER BY "+TITLE+" ASC"+
                 ";";
 
         // Cursor point to a location in your results
@@ -119,6 +119,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         // Cursor point to a location in your results
         Cursor c = db.rawQuery(query, null);
+        db.close();
         // Move to first row in your results
         c.moveToFirst();
         if (c.getCount() > 0)
@@ -133,7 +134,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                     dbTask.add(new Task(id, ln, title, dec, dt, tm));
                 }
             } while (c.moveToNext());
-        db.close();
 
         return dbTask;
     }
@@ -141,6 +141,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public Vector<String> getListNames(){
         Vector<String>allLists=new Vector<String>();
         allLists.add("all");
+        allLists.add("temp");
+        allLists.add("habijabi");
         SQLiteDatabase db = getWritableDatabase();
         String query = "SELECT DISTINCT "+LIST_NAME+" FROM "+ LIST_TABLE_NAME +";";
 

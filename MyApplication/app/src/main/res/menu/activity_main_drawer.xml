@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <group android:checkableBehavior="single"
         android:id="@+id/main_group">
-        <item
-            android:id="@+id/nav_all"
-            android:icon="@android:drawable/ic_menu_agenda"
-            android:title="All"
-            />
-        <item
-            android:id="@+id/nav_calendar"
-            android:icon="@android:drawable/ic_menu_my_calendar"
-            android:title="Calendar"
-            />
+        <!--<item-->
+            <!--android:id="@+id/nav_all"-->
+            <!--android:icon="@android:drawable/ic_menu_agenda"-->
+            <!--android:title="@string/menu_nav_all"-->
+            <!--/>-->
+        <!--<item-->
+            <!--android:id="@+id/nav_calendar"-->
+            <!--android:icon="@android:drawable/ic_menu_my_calendar"-->
+            <!--android:title="@string/menu_nav_calendar"-->
+            <!--/>-->
     </group>
 
-    <item android:title="">
+    <item android:title=""
+        android:orderInCategory="999">
         <menu>
             <item
                 android:id="@+id/nav_edit"
                 android:icon="@android:drawable/ic_menu_edit"
-                android:title="Edit Task Lists" />
+                android:title="@string/menu_nav_edit" />
             <item
                 android:id="@+id/nav_settings"
                 android:icon="@android:drawable/ic_menu_manage"
-                android:title="Settings" />
+                android:title="@string/menu_nav_settings" />
         </menu>
     </item>
 
