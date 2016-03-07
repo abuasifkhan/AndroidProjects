@@ -70,7 +70,9 @@ public class AddNewActivity extends Activity {
 
                 title = givenTitle.getText().toString();
                 description = givenDescription.getText().toString();
-                if (title == "" || description == "" || date == "" || time == "") {
+                date = givenDate.getText().toString();
+                time = givenTime.getText().toString();
+                if (title==null || description==null || date.equals("Pick Date") || time.equals("Pick Time")) {
                     Toast.makeText(getBaseContext(), "Fill up all the fields please.", Toast.LENGTH_LONG).show();
                     return;
                 }

@@ -77,17 +77,13 @@ public class MainActivity extends AppCompatActivity
 
         setNavigationView();
 
-        CURRENT_LIST_NAME = allList.elementAt(0);
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        UpdateTaskList(CURRENT_LIST_NAME);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {                                         // If Fab Button Clicked
             @Override
             public void onClick(View view) {
-                if(CURRENT_LIST_NAME.equals("All") || CURRENT_LIST_NAME.equals("All")){
+                if(CURRENT_LIST_NAME.equals("All") || CURRENT_LIST_NAME.equals("all")){
                     Toast.makeText(MainActivity.this,"Please select a list to add.",Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -107,6 +103,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        UpdateTaskList(CURRENT_LIST_NAME);
     }
 
     @Override
@@ -148,9 +145,7 @@ public class MainActivity extends AppCompatActivity
     private void UpdateTaskList(String listName) {
         final Vector<Task> taskList;
         // TODO: works here!
-        if(listName.equals("All"))
-            taskList = myDatabase.databaseToTask();
-        else taskList = myDatabase.databaseToTask(listName);
+        taskList = myDatabase.databaseToTask(listName);
 
         ListAdapter adapter = new CustomAdapter(this, taskList);
         ListView listView = (ListView) findViewById(R.id.taskListView);
@@ -189,14 +184,15 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == REQ_FOR_ADD && resultCode == Activity.RESULT_OK) {                       // RESULT FROM AddNewActivity Activity for Adding Task.
             final Task newTask = (Task) data.getExtras().getSerializable("newTask");
             myDatabase.addTask(newTask);
-            UpdateTaskList(CURRENT_LIST_NAME);
+            assert newTask != null;
+            UpdateTaskList(newTask.getListName());
 
             Snackbar.make(drawerLayout,"Task added!",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
                         myDatabase.deleteTask(newTask.get_id());
-                        UpdateTaskList(CURRENT_LIST_NAME);
+                        UpdateTaskList(newTask.getListName());
                     }catch (NullPointerException e){
                         System.out.println("Null Pointer Caught!");
                     }
@@ -204,15 +200,16 @@ public class MainActivity extends AppCompatActivity
             }).show();
         }
         else if(requestCode==REQ_FOR_UPDATE && resultCode==Activity.RESULT_OK){                     // RESULT from AddNewActivity Activity for Updating a Task.
-            Task newTask = (Task) data.getExtras().getSerializable("newTask");
+            final Task newTask = (Task) data.getExtras().getSerializable("newTask");
             myDatabase.updateById(updateOrDelete.get_id(), newTask);
-            UpdateTaskList(CURRENT_LIST_NAME);
+            assert newTask != null;
+            UpdateTaskList(newTask.getListName());
             Snackbar.make(drawerLayout,"Task Updated!",Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try{
                         myDatabase.updateById(updateOrDelete.get_id(),updateOrDelete);
-                        UpdateTaskList(CURRENT_LIST_NAME);
+                        UpdateTaskList(newTask.getListName());
                     }catch(NullPointerException e) {
                         System.out.println("Null Pointer Caught!");
                     }
@@ -281,12 +278,15 @@ public class MainActivity extends AppCompatActivity
         }
         else if(item.getTitle().toString().equals("All") ){
             CURRENT_LIST_NAME = item.getTitle().toString();
+            UpdateTaskList(CURRENT_LIST_NAME);
         }
         else if(item.getTitle().toString().equals("Calendar")){
             CURRENT_LIST_NAME = item.getTitle().toString();
+            Snackbar.make(drawerLayout,"Method not Implemented Yet. Coming Soon.",Snackbar.LENGTH_SHORT).show();
         }
         else{
             CURRENT_LIST_NAME = item.getTitle().toString();
+            UpdateTaskList(CURRENT_LIST_NAME);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -114,15 +114,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public Vector<Task> databaseToTask(String listName){
         Vector<Task> dbTask = new Vector<Task>();
         SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM " + TASK_TABLE_NAME + "WHERE "+LIST_NAME+" = \'"+listName+"\'"+ " ORDERED BY "+TITLE+" ASC"+
+        String query = "SELECT * FROM " + TASK_TABLE_NAME + " WHERE "+LIST_NAME+" = \'"+listName+"\'"+ " ORDER BY "+TITLE+
                 ";";
-
+        if(listName.equals("All")) {
+            query = "SELECT * FROM " + TASK_TABLE_NAME +
+                    ";";
+        }
+        System.out.println(query);
         // Cursor point to a location in your results
         Cursor c = db.rawQuery(query, null);
-        db.close();
         // Move to first row in your results
-        c.moveToFirst();
-        if (c.getCount() > 0)
+        if(c!=null && c.moveToFirst()) {
             do {
                 if (c.getString(c.getColumnIndex(_ID)) != null) {
                     long id = c.getInt(c.getColumnIndex(_ID));
@@ -135,12 +137,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 }
             } while (c.moveToNext());
 
+            c.close();
+            db.close();
+            return dbTask;
+        }
         return dbTask;
     }
 
     public Vector<String> getListNames(){
         Vector<String>allLists=new Vector<String>();
-        allLists.add("all");
         allLists.add("temp");
         allLists.add("habijabi");
         SQLiteDatabase db = getWritableDatabase();
