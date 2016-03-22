@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/home/asif/Desktop/AndroidProjects/activity-lifecycle1/app/build/intermediates/res/merged/debug/layout/activity_b.xml",
+        "source": "/home/asif/Desktop/AndroidProjects/activity-lifecycle1/app/src/main/res/layout/activity_b.xml"
+    },
+    {
+        "merged": "/home/asif/Desktop/AndroidProjects/activity-lifecycle1/app/build/intermediates/res/merged/debug/layout/activity_c.xml",
+        "source": "/home/asif/Desktop/AndroidProjects/activity-lifecycle1/app/src/main/res/layout/activity_c.xml"
+    },
+    {
+        "merged": "/home/asif/Desktop/AndroidProjects/activity-lifecycle1/app/build/intermediates/res/merged/debug/layout/activity_a.xml",
+        "source": "/home/asif/Desktop/AndroidProjects/activity-lifecycle1/app/src/main/res/layout/activity_a.xml"
+    },
+    {
+        "merged": "/home/asif/Desktop/AndroidProjects/activity-lifecycle1/app/build/intermediates/res/merged/debug/layout/activity_dialog.xml",
+        "source": "/home/asif/Desktop/AndroidProjects/activity-lifecycle1/app/src/main/res/layout/activity_dialog.xml"
+    }
+]

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/asif/Desktop/AndroidProjects/activity-lifecycle1/app/libs/android-support-v13.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="ecda966839090a41b29a9239d44bafc06fdadb87">
+        <dex dex="/home/asif/Desktop/AndroidProjects/activity-lifecycle1/app/build/intermediates/pre-dexed/debug/android-support-v13_181101ebdb6e8111fd62c80fc9bb6f827ca9512e.jar" />
+    </item>
+
+</items>
