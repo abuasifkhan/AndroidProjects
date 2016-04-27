@@ -10,6 +10,7 @@ import android.nfc.NfcAdapter.OnNdefPushCompleteCallback;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +58,7 @@ public class MainActivity extends Activity implements
             NdefRecord NdefRecord_0 = inNdefRecords[0];
             String inMsg = new String(NdefRecord_0.getPayload());
             textInfo.setText(inMsg);
+            Log.d("asif",inMsg);
         }
     }
 
@@ -93,7 +95,7 @@ public class MainActivity extends Activity implements
 
         String stringOut = textOut.getText().toString();
         byte[] bytesOut = stringOut.getBytes();
-
+        Log.d("asif",stringOut);
         NdefRecord ndefRecordOut = new NdefRecord(
                 NdefRecord.TNF_MIME_MEDIA,
                 "text/plain".getBytes(),
