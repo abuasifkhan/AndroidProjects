@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/asif/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/23.3.0/support-annotations-23.3.0.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="db7791d75a07fef9844d06236c1c59ba7bf6997c">
+        <dex dex="/home/asif/Asif/Selise_Projects/SlidingTabs1/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-23.3.0_b1f77b4967cec1aecd7dbf0c3c5bc2b78dfcbd9b/classes.dex" />
+    </item>
+    <item
+        jar="/home/asif/Asif/Selise_Projects/SlidingTabs1/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="a184c14d0cb48a24052d4b2cad1b970bd1ae9ff5">
+        <dex dex="/home/asif/Asif/Selise_Projects/SlidingTabs1/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_344d6f2823d72719cbfbaf67b6856ce87530f04d/classes.dex" />
+    </item>
+    <item
+        jar="/home/asif/Asif/Selise_Projects/SlidingTabs1/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.3.0/jars/libs/internal_impl-23.3.0.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="4da5a4d697d32497c6f85567a5112e62fdfd0676">
+        <dex dex="/home/asif/Asif/Selise_Projects/SlidingTabs1/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-23.3.0_fd46c9df7e7bd338de64ad3709160f6048f817fa/classes.dex" />
+    </item>
+    <item
+        jar="/home/asif/Asif/Selise_Projects/SlidingTabs1/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="27679df8923a80b5094394a2b20773b04cc815fb">
+        <dex dex="/home/asif/Asif/Selise_Projects/SlidingTabs1/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_79375effff4dd8fa8dadb1569f566e7850541933/classes.dex" />
+    </item>
+    <item
+        jar="/home/asif/Asif/Selise_Projects/SlidingTabs1/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.3.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="8a034dd16c0dfd75fe86c52c2cd581592acc684a">
+        <dex dex="/home/asif/Asif/Selise_Projects/SlidingTabs1/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-v4-23.3.0_506d8d33e7dbbb158ff12100eb100bef83a6cc31/classes.dex" />
+    </item>
+
+</items>
